@@ -19,7 +19,7 @@ from llama_index.llms.groq import Groq
 
 # Set the LLM to use Google Generative AI instead of OpenAI default
 G_llm= Groq(model="qwen-2.5-32b", api_key="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")
-
+# G_llm=google.LLM(model="gemini-1.5-pro")
 # Set the embedding model to use HuggingFace instead of OpenAI default
 embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
@@ -46,9 +46,12 @@ else:
 @llm.function_tool
 async def query_info(query: str) -> str:
     """Get more information about a specific topic from the knowledge base"""
-    query_engine = index.as_query_engine(use_async=True,llm=G_llm)
-    res = await query_engine.aquery(query)
-    print("Query result:", res)
+    # query_engine = index.as_query_engine(use_async=True,llm=G_llm)
+    # res = await query_engine.aquery(query)
+    retriever = index.as_retriever(similarity_top_k=3) 
+    retrieved_nodes = retriever.retrieve(query)
+    res=retrieved_nodes[0].text
+    print("Query result:",res )
     return str(res)
 
 async def entrypoint(ctx: JobContext):
