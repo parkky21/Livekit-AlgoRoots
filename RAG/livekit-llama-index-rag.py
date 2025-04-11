@@ -15,10 +15,10 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
 from livekit.agents import Agent, AgentSession, AutoSubscribe, JobContext, WorkerOptions, cli, llm
 from livekit.plugins import deepgram, google, silero
-from llama_index.llms.groq import Groq
+# from llama_index.llms.groq import Groq
 
 # Set the LLM to use Google Generative AI instead of OpenAI default
-G_llm= Groq(model="qwen-2.5-32b", api_key="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")
+# G_llm= Groq(model="qwen-2.5-32b", api_key="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")
 # G_llm=google.LLM(model="gemini-1.5-pro")
 # Set the embedding model to use HuggingFace instead of OpenAI default
 embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
