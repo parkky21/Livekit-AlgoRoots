@@ -32,6 +32,7 @@ async def entrypoint(ctx: agents.JobContext):
         room=ctx.room,
         agent=Assistant(),
         room_input_options=room_io.RoomInputOptions(
+            
         ),
     )
 

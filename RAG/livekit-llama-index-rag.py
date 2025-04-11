@@ -12,15 +12,15 @@ from llama_index.core import (
    
 )
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-
-from livekit.agents import Agent, AgentSession, AutoSubscribe, JobContext, WorkerOptions, cli, llm
+from livekit.agents import Agent, AgentSession, AutoSubscribe, JobContext, WorkerOptions, cli, llm,room_io
 from livekit.plugins import deepgram, google, silero
 from llama_index.core.node_parser import SentenceSplitter
-# from llama_index.llms.groq import Groq
+# from livekit.plugins import noise_cancellation  #fro noice cancellation
 
+
+# from llama_index.llms.groq import Groq
 # Set the LLM to use Google Generative AI instead of OpenAI default
-# G_llm= Groq(model="qwen-2.5-32b", api_key="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")
-# G_llm=google.LLM(model="gemini-1.5-pro")
+# G_llm= Groq(model="qwen-2.5-32b", api_key="")
 # Set the embedding model to use HuggingFace instead of OpenAI default
 embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
@@ -32,7 +32,7 @@ if not PERSIST_DIR.exists():
     # Load the documents and create the index
     documents = SimpleDirectoryReader(THIS_DIR / "data").load_data()
     chunk_size = 512  # Number of characters per chunk
-    chunk_overlap = 20  # Overlap between chunks
+    chunk_overlap = 100  # Overlap between chunks
 
     node_parser = SentenceSplitter(
         chunk_size=chunk_size,
@@ -55,8 +55,6 @@ else:
 @llm.function_tool
 async def query_info(query: str) -> str:
     """Get more information about a specific topic from the knowledge base"""
-    # query_engine = index.as_query_engine(use_async=True,llm=G_llm)
-    # res = await query_engine.aquery(query)
     retriever = index.as_retriever(similarity_top_k=3) 
     retrieved_nodes = retriever.retrieve(query)
     res=retrieved_nodes[0].text
@@ -114,7 +112,14 @@ If unresolved: “I’ll make sure this gets reviewed and followed up.”
     )
     
     session = AgentSession()
-    await session.start(agent=agent, room=ctx.room)
+    await session.start(
+        agent=agent, 
+        room=ctx.room,
+        ### for NOice cancellation
+        # room_input_options=room_io.RoomInputOptions(
+        #     noise_cancellation=noise_cancellation.BVC(),
+        # ),
+        )
     
     # Instruct the agent to speak first
     await session.say("Hey, how can I help you today?", allow_interruptions=True)
