@@ -1,0 +1,7 @@
+/myvenv
+/kokoro_test
+stt_whisper.py
+tts_kokoro.py
+/RAG/query-engine-storage
+.env
+/RAG/.env
